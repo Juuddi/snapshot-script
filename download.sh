@@ -20,6 +20,13 @@ else
     echo -e "----- Found directory: $GO_QUAI_DIR. Proceeding... ----- \n"
 fi
 
+echo -e "----- Stopping node and stratum -----\n"
+pkill -9 quai-stratum
+cd "$GO_QUAI_DIR"
+make stop
+cd
+echo -e "\n----- Node and stratum stopped -----\n"
+
 echo -e "----- Removing database and nodelogs -----\n"
 rm -rf "$GO_QUAI_DIR"/nodelogs ~/.quai
 echo -e "----- Database and nodelogs cleared -----\n"
