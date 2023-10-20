@@ -7,13 +7,13 @@ This script only runs correctly if your `go-quai` is in the home directory. It w
 Clone the repository with
 
 ```bash
-git clone https://github.com/Juuddi/snapshot-script.git
+git clone https://github.com/Juuddi/snapshot-script.git && cd snapshot-script
 ```
 
 To run the script, you'll need to make it executable first
 
 ```bash
-chmod +x download.sh
+sudo chmod +x download.sh
 ```
 
 Then you can run it with
