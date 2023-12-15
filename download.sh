@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# check if zstd is installed
+if ! command -v zstd &> /dev/null; then
+    echo "zstd is not installed. Please install zstd to continue."
+    echo "For Ubuntu/Debian, run the following command: sudo apt-get install zstd" 
+    exit 1
+fi
+
 # Navigate to the home directory
 cd
 
@@ -32,33 +39,37 @@ rm -rf "$GO_QUAI_DIR"/nodelogs ~/.quai
 echo -e "----- Database and nodelogs cleared -----\n"
 
 FILE1_PATH=$(find "$START_PATH" -type f -name "quai_colosseum_backup" 2>/dev/null | head -n 1)
-if [[ -z "$FILE1_PATH" ]]; then
-    echo -e "----- Outdated quai_colosseum_backup not found. Proceeding... -----\n"
+FILE2_PATH=$(find "$START_PATH" -type f -name "quai-colosseum-backup" 2>/dev/null | head -n 1)
+if [[ -z "$FILE1_PATH" ]] && [[ -z "$FILE2_PATH" ]]; then
+    echo -e "----- Outdated unzipped snapshot not found. Proceeding... -----\n"
 else
     echo -e "----- Removing prior unzipped snapshot -----\n"
-    rm -rf ~/quai_colosseum_backup ~/quai_colosseum_backup.tar.gz
+    rm -rf ~/quai_colosseum_backup ~/quai-colosseum-backup
     echo -e "----- Prior unzipped snapshot removed -----\n"
 fi
 
-FILE2_PATH=$(find "$START_PATH" -type f -name "quai_colosseum_backup.tar.gz" 2>/dev/null | head -n 1)
-if [[ -z "$FILE2_PATH" ]]; then
+FILE3_PATH=$(find "$START_PATH" -type f -name "quai_colosseum_backup.tar.gz" 2>/dev/null | head -n 1)
+FILE4_PATH=$(find "$START_PATH" -type f -name "quai_colosseum_backup.tar.zst" 2>/dev/null | head -n 1)
+if [[ -z "$FILE3_PATH" ]]; then
     echo -e "----- Outdated quai_colosseum_backup.tar.gz not found. Proceeding... -----\n"
 else
-    echo -e "----- Removing prior snapshot zip -----\n"
-    rm -rf ~/quai_colosseum_backup ~/quai_colosseum_backup.tar.gz
-    echo -e "----- Prior snapshot zip removed -----\n"
+    echo -e "----- Removing prior snapshot gzip -----\n"
+    rm -rf ~/quai_colosseum_backup.tar.zst ~/quai_colosseum_backup.tar.gz
+    echo -e "----- Prior snapshot gzip removed -----\n"
 fi
 
 echo -e "----- Downloading new snapshot -----\n"
-wget https://archive.quai.network/quai_colosseum_backup.tar.gz
+wget https://archive.quai.network/quai_colosseum_backup.tar.zst/
 echo -e "\n----- New snapshot downloaded -----\n"
 
+
+
 echo -e "----- Extracting new snapshot -----\n"
-tar -xzvf quai_colosseum_backup.tar.gz
+tar -I 'zstd -T0' -xvf quai_colosseum_backup.tar.zst
 echo -e "\n----- New snapshot extracted -----\n"
 
 echo -e "----- Coping extracted snapshot into db -----\n"
-cp -r ~/quai_colosseum_backup ~/.quai
+cp -r quai-colosseum-backup ~/.quai
 echo -e "----- New snapshot copied into db -----\n"
 
 echo -e "----- Pulling latest code -----\n"
