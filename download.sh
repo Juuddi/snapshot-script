@@ -59,10 +59,8 @@ else
 fi
 
 echo -e "----- Downloading new snapshot -----\n"
-wget https://archive.quai.network/quai_colosseum_backup.tar.zst/
+wget https://archive.quai.network/quai_colosseum_backup.tar.zst
 echo -e "\n----- New snapshot downloaded -----\n"
-
-
 
 echo -e "----- Extracting new snapshot -----\n"
 tar -I 'zstd -T0' -xvf quai_colosseum_backup.tar.zst
